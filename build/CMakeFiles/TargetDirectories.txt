@@ -1,0 +1,5 @@
+/root/mytest/anredis_c/build/CMakeFiles/rebuild_cache.dir
+/root/mytest/anredis_c/build/CMakeFiles/edit_cache.dir
+/root/mytest/anredis_c/build/anredistp/CMakeFiles/rebuild_cache.dir
+/root/mytest/anredis_c/build/anredistp/CMakeFiles/anredistp.dir
+/root/mytest/anredis_c/build/anredistp/CMakeFiles/edit_cache.dir
