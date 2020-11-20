@@ -14,7 +14,7 @@ endif()
 
 cmake_minimum_required(VERSION 3.4)
 
-project(anredis_c VERSION 1.0.0.0)
+project(an3tp VERSION 1.0.0.0)
 message("CMAKE_PROJECT_NAME = ${CMAKE_PROJECT_NAME}")
 message("PROJECT_VERSION = ${PROJECT_VERSION}")
 message("PROJECT_VERSION_MAJOR = ${PROJECT_VERSION_MAJOR}")
@@ -29,7 +29,7 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 message("${CMAKE_PROJECT_NAME} BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
 
-#set(PACKAGE_NAME "anredis_c")
+#set(PACKAGE_NAME "an3tp")
 #add_definitions(-DPLATFORM_NAME="${CMAKE_SYSTEM_NAME}")
 
 set(DEPS_INCLUDE_DIC "${PROJECT_SOURCE_DIR}/deps/include")
@@ -44,6 +44,9 @@ set(UV_LIB "${PROJECT_SOURCE_DIR}/deps/libuv-v1.37.0/lib/libuv_a.a")
 #set(SSL_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/deps/libcurl-v7480/include")
 set(HIREDIS_INCLUDE "${PROJECT_SOURCE_DIR}/deps/hiredis/include")
 set(HIREDIS_LIB "${PROJECT_SOURCE_DIR}/deps/hiredis/lib/libhiredis_static.a")
+set(NANOMSG_INCLUDE "${PROJECT_SOURCE_DIR}/deps/libnanomsg/include")
+set(NANOMSG_LIB "${PROJECT_SOURCE_DIR}/deps/libnanomsg/lib/libnanomsg.a")
+
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 	set(TCMALLOC_LIB "${PROJECT_SOURCE_DIR}/deps/libtcmalloc/lib/libtcmalloc.a")
@@ -67,26 +70,27 @@ message("UV_LIB = ${UV_LIB}")
 message("TCMALLOC_LIB = ${TCMALLOC_LIB}")
 message("HIREDIS_INCLUDE = ${HIREDIS_INCLUDE}")
 message("HIREDIS_LIB = ${HIREDIS_LIB}")
-
+message("NANOMSG_INCLUDE = ${NANOMSG_INCLUDE}")
+message("NANOMSG_LIB = ${NANOMSG_LIB}")
 
 
 if(NOT WIN32)
-	set(anredis_c_DEBUG_FLAGS "-DDEBUG -fno-omit-frame-pointer")
-	set(anredis_c_RELEASE_FLAGS "-DNDEBUG")
+	set(an3tp_DEBUG_FLAGS "-DDEBUG -fno-omit-frame-pointer")
+	set(an3tp_RELEASE_FLAGS "-DNDEBUG")
 
 	#c11 / c++11 std
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 -ffunction-sections -fdata-sections")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -ffunction-sections -fdata-sections")
 
 	#debug
-	set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0 -Wall -g -ggdb ${anredis_c_DEBUG_FLAGS}")
-	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0 -Wall -g -ggdb ${anredis_c_DEBUG_FLAGS}")
+	set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0 -Wall -g -ggdb ${an3tp_DEBUG_FLAGS}")
+	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0 -Wall -g -ggdb ${an3tp_DEBUG_FLAGS}")
 
 	#release
-	#set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -Wall -g -fno-strict-aliasing ${anredis_c_RELEASE_FLAGS}")
-	#set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -Wall -g -fno-strict-aliasing ${anredis_c_RELEASE_FLAGS}")
-	set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -Wall -fno-strict-aliasing ${anredis_c_RELEASE_FLAGS}")
-	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -Wall -fno-strict-aliasing ${anredis_c_RELEASE_FLAGS}")
+	#set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -Wall -g -fno-strict-aliasing ${an3tp_RELEASE_FLAGS}")
+	#set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -Wall -g -fno-strict-aliasing ${an3tp_RELEASE_FLAGS}")
+	set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -Wall -fno-strict-aliasing ${an3tp_RELEASE_FLAGS}")
+	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -Wall -fno-strict-aliasing ${an3tp_RELEASE_FLAGS}")
 
 	set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--gc-sections")
 	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--gc-sections")
@@ -102,20 +106,20 @@ if(NOT WIN32)
 
 else()
 
-	set(anredis_c_FLAGS_WIN "-D_CRT_SECURE_NO_WARNINGS -DWIN32 /EHsc /W3 /Zi")
-	set(anredis_c_FLAGS_WIN_DEBUG "/MTd /Od")
-	set(anredis_c_FLAGS_WIN_RELEASE "/MT")
+	set(an3tp_FLAGS_WIN "-D_CRT_SECURE_NO_WARNINGS -DWIN32 /EHsc /W3 /Zi")
+	set(an3tp_FLAGS_WIN_DEBUG "/MTd /Od")
+	set(an3tp_FLAGS_WIN_RELEASE "/MT")
 
-	set(CMAKE_C_FLAGS "${anredis_c_FLAGS_WIN}")
-	set(CMAKE_CXX_FLAGS "${anredis_c_FLAGS_WIN}")
+	set(CMAKE_C_FLAGS "${an3tp_FLAGS_WIN}")
+	set(CMAKE_CXX_FLAGS "${an3tp_FLAGS_WIN}")
 
-	set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} ${anredis_c_FLAGS_WIN_DEBUG}")
-	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${anredis_c_FLAGS_WIN_DEBUG}")
+	set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} ${an3tp_FLAGS_WIN_DEBUG}")
+	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${an3tp_FLAGS_WIN_DEBUG}")
 
-	set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} ${anredis_c_FLAGS_WIN_RELEASE}")
-	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${anredis_c_FLAGS_WIN_RELEASE}")
+	set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} ${an3tp_FLAGS_WIN_RELEASE}")
+	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${an3tp_FLAGS_WIN_RELEASE}")
 
 endif()
 
-#add_subdirectory(libanredis_c)
-add_subdirectory(anredistp)
+#add_subdirectory(liban3tp)
+add_subdirectory(an3tp1)

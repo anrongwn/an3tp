@@ -26,6 +26,7 @@
 #include <time.h>
 
 #include "hiredis.h"
+#include "nn.h"
 
 /*
 typedef struct vrl_s {
@@ -75,7 +76,6 @@ static std::mutex g_mutex_;
 
 static int task(int mode, const char *url, const char *params) {
     static int i = 0;
-    
 
     return 0;
 }
@@ -124,8 +124,6 @@ int main(int argc, char *argv[]) {
     int interval = 40;
 #endif
 
-    
-
     auto start = std::chrono::system_clock::now();
 
     /*
@@ -135,11 +133,11 @@ int main(int argc, char *argv[]) {
         cJSON_Delete(json);
     */
     // std::this_thread::sleep_for(std::chrono::milliseconds(1000 * 60));
-   
+
     unsigned int j, isunix = 0;
-    redisContext * c = nullptr;
+    redisContext *c = nullptr;
     redisReply *reply = nullptr;
-    
+
     const char *hostname = (argc > 1) ? argv[1] : "192.168.8.132";
 
     if (argc > 2) {
@@ -152,7 +150,7 @@ int main(int argc, char *argv[]) {
 
     int port = (argc > 2) ? atoi(argv[2]) : 6379;
 
-    struct timeval timeout = { 1, 500000 }; // 1.5 seconds
+    struct timeval timeout = {1, 500000}; // 1.5 seconds
     if (isunix) {
         c = redisConnectUnixWithTimeout(hostname, timeout);
     } else {
@@ -168,34 +166,32 @@ int main(int argc, char *argv[]) {
         exit(-1);
     }
 
-    //login
-    reply = (redisReply*)redisCommand(c, "AUTH 924(@$");
-    switch (reply->type)
-    {
-    case REDIS_REPLY_ERROR :
+    // login
+    reply = (redisReply *)redisCommand(c, "AUTH 924(@$");
+    switch (reply->type) {
+    case REDIS_REPLY_ERROR:
         /* code */
         printf("AUTH : error(%d) %s\n", REDIS_REPLY_ERROR, reply->str);
         freeReplyObject(reply);
         exit(-1);
         break;
-    
+
     default:
         printf("AUTH: %s\n", reply->str);
         freeReplyObject(reply);
         break;
     }
 
-    //select 5 db
-    reply = (redisReply*)redisCommand(c, "SELECT 5");
-    switch (reply->type)
-    {
-    case REDIS_REPLY_ERROR :
+    // select 5 db
+    reply = (redisReply *)redisCommand(c, "SELECT 5");
+    switch (reply->type) {
+    case REDIS_REPLY_ERROR:
         /* code */
         printf("SELECT 5 : error(%d) %s\n", REDIS_REPLY_ERROR, reply->str);
         freeReplyObject(reply);
         exit(-1);
         break;
-    
+
     default:
         printf("SELECT 5: %s\n", reply->str);
         freeReplyObject(reply);
@@ -203,46 +199,46 @@ int main(int argc, char *argv[]) {
     }
 
     /* PING server */
-    reply = (redisReply*)redisCommand(c,"PING");
-    printf("PING: %d, %s\n",reply->type, reply->str);
+    reply = (redisReply *)redisCommand(c, "PING");
+    printf("PING: %d, %s\n", reply->type, reply->str);
     freeReplyObject(reply);
 
     /* Set a key */
-    reply = (redisReply*)redisCommand(c,"SET %s %s", "foo", "hello world");
+    reply = (redisReply *)redisCommand(c, "SET %s %s", "foo", "hello world");
     printf("SET: %d, %s\n", reply->type, reply->str);
     freeReplyObject(reply);
 
     /* Set a key using binary safe API */
-    reply = (redisReply*)redisCommand(c,"SET %b %b", "bar", (size_t) 3, "hello", (size_t) 5);
+    reply = (redisReply *)redisCommand(c, "SET %b %b", "bar", (size_t)3, "hello", (size_t)5);
     printf("SET (binary API): %d, %s\n", reply->type, reply->str);
     freeReplyObject(reply);
 
     /* Try a GET and two INCR */
-    reply = (redisReply*)redisCommand(c,"GET foo");
+    reply = (redisReply *)redisCommand(c, "GET foo");
     printf("GET foo: %d, %s\n", reply->type, reply->str);
     freeReplyObject(reply);
 
-    reply = (redisReply*)redisCommand(c,"INCR counter");
+    reply = (redisReply *)redisCommand(c, "INCR counter");
     printf("INCR counter: %lld\n", reply->integer);
     freeReplyObject(reply);
     /* again ... */
-    reply = (redisReply*)redisCommand(c,"INCR counter");
+    reply = (redisReply *)redisCommand(c, "INCR counter");
     printf("INCR counter: %lld\n", reply->integer);
     freeReplyObject(reply);
 
     /* Create a list of numbers, from 0 to 9 */
-    reply = (redisReply*)redisCommand(c,"DEL mylist");
+    reply = (redisReply *)redisCommand(c, "DEL mylist");
     freeReplyObject(reply);
     for (j = 0; j < 10; j++) {
         char buf[64];
 
-        snprintf(buf,64,"%u",j);
-        reply = (redisReply*)redisCommand(c,"LPUSH mylist element-%s", buf);
+        snprintf(buf, 64, "%u", j);
+        reply = (redisReply *)redisCommand(c, "LPUSH mylist element-%s", buf);
         freeReplyObject(reply);
     }
 
     /* Let's check what we have inside the list */
-    reply = (redisReply*)redisCommand(c,"LRANGE mylist 0 -1");
+    reply = (redisReply *)redisCommand(c, "LRANGE mylist 0 -1");
     if (reply->type == REDIS_REPLY_ARRAY) {
         for (j = 0; j < reply->elements; j++) {
             printf("%u) %s\n", j, reply->element[j]->str);
