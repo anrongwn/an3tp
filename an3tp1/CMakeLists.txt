@@ -43,7 +43,7 @@ if (NOT WIN32)
     set_target_properties(${an3tp1_TARGET_NAME} PROPERTIES LINK_FLAGS "-Wl,-rpath,./")
 
     #target_link_libraries(an3tp1 pthread dl rt z crypto ssl vrl)
-    target_link_libraries(${an3tp1_TARGET_NAME} pthread dl rt z ${HIREDIS_LIB} ${NANOMSG_LIB} )  
+    target_link_libraries(${an3tp1_TARGET_NAME} pthread dl rt z nsl ${HIREDIS_LIB} ${NANOMSG_LIB} )  
     
 else()
     target_link_libraries(${an3tp1_TARGET_NAME} ${UV_LIB} ${CURL_LIB} ${VRL_LIB})
