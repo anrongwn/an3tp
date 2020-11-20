@@ -1,5 +1,0 @@
-/root/mytest/an3tp/build/CMakeFiles/rebuild_cache.dir
-/root/mytest/an3tp/build/CMakeFiles/edit_cache.dir
-/root/mytest/an3tp/build/an3tp1/CMakeFiles/rebuild_cache.dir
-/root/mytest/an3tp/build/an3tp1/CMakeFiles/an3tp1.dir
-/root/mytest/an3tp/build/an3tp1/CMakeFiles/edit_cache.dir
