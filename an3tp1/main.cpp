@@ -124,6 +124,8 @@ int main(int argc, char *argv[]) {
     int interval = 40;
 #endif
 
+    nn_term();
+
     auto start = std::chrono::system_clock::now();
 
     /*
