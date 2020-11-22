@@ -27,6 +27,9 @@
 
 #include "hiredis.h"
 #include "nn.h"
+#include "pipeline.h"
+#include <pthread.h>
+#include <unistd.h>
 
 /*
 typedef struct vrl_s {
@@ -92,6 +95,67 @@ static void thread_cb(int mode, const char *url, const char *params) {
     }
 }
 
+/*
+  此程序为nanomsg多线程一对一单向通信demo。
+*/
+
+// inproc 标识用于多线程通信
+char *url = "inproc://sky_test";
+
+//发送数据的socket初始化
+int send_sock_init(int *sock) {
+    *sock = nn_socket(AF_SP, NN_PUSH);
+    if (*sock < 0) {
+        printf("create send data sock failed\r\n");
+        return 1;
+    }
+
+    if (nn_bind(*sock, url) < 0) {
+        printf("bind send data sock failed\r\n");
+        return 1;
+    }
+
+    printf("send data socket init success...\r\n");
+    return 0;
+}
+
+//接收数据的socket初始化
+int recieve_sock_init(int *sock) {
+    *sock = nn_socket(AF_SP, NN_PULL);
+    if (*sock < 0) {
+        printf("create recieve data sock failed\r\n");
+        return 1;
+    }
+    if (nn_connect(*sock, url) < 0) {
+        printf("connect recieve data sock failed\r\n");
+        return 1;
+    }
+    printf("recieve data socket init success...\r\n");
+    return 0;
+}
+
+//线程测试
+void *thread_test(void *arg) {
+    int c_sock;
+    if (0 != recieve_sock_init(&c_sock)) {
+        return 0;
+    }
+    while (1) {
+        //轮询接收信息
+        char *rx_msg = NULL;
+        int result = nn_recv(c_sock, &rx_msg, NN_MSG, NN_DONTWAIT);
+        if (result > 0) {
+            printf("Thread Recieve: %s\r\n", rx_msg);
+            nn_freemsg(rx_msg);
+        }
+
+        sleep(1);
+    }
+
+    return 0;
+}
+
+// main
 int main(int argc, char *argv[]) {
 #ifdef DEBUG
     std::cout << "anredistp debug mode." << std::endl;
@@ -124,8 +188,27 @@ int main(int argc, char *argv[]) {
     int interval = 40;
 #endif
 
-    nn_term();
+    int s_sock;
+    pthread_t ps;
+    char *tx_msg = "Hello thread test";
+    if (0 != send_sock_init(&s_sock)) {
+        return 1;
+    }
 
+    pthread_create(&ps, NULL, thread_test, NULL);
+    sleep(1);
+    //间隔两秒，发送信息到子线程接收数据端
+    while (1) {
+        size_t len = strlen(tx_msg) + 1;
+        if (nn_send(s_sock, tx_msg, len, 0) < 0) {
+            printf("Main Send Msg Failed\r\n");
+            usleep(500000);
+            continue;
+        }
+        sleep(2);
+    }
+
+    return 0;
     auto start = std::chrono::system_clock::now();
 
     /*
