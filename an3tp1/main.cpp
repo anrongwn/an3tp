@@ -28,7 +28,9 @@
 #include "hiredis.h"
 #include <pthread.h>
 #include <unistd.h>
-#include "nng/nng.h"
+//#include "nng/nng.h"
+
+#include "an_nn.h"
 
 /*
 typedef struct vrl_s {
@@ -128,8 +130,22 @@ int main(int argc, char *argv[]) {
     int interval = 40;
 #endif
 
-    nng_fini();
-    
+    // nng_fini();
+    an_data_producer producer;
+    producer.start("/root/mytest/bk_data/1.db");
+
+    an_data_consumer consumer;
+    consumer.start("/root/mytest/bk_data/2.db");
+
+    while (!g_exit_flag) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
+    std::cout << "stop." << std::endl;
+
+    producer.stop();
+    consumer.stop();
+    return 0;
+
     auto start = std::chrono::system_clock::now();
 
     /*
