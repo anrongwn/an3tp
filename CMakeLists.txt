@@ -44,8 +44,12 @@ set(UV_LIB "${PROJECT_SOURCE_DIR}/deps/libuv-v1.37.0/lib/libuv_a.a")
 #set(SSL_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/deps/libcurl-v7480/include")
 set(HIREDIS_INCLUDE "${PROJECT_SOURCE_DIR}/deps/hiredis/include")
 set(HIREDIS_LIB "${PROJECT_SOURCE_DIR}/deps/hiredis/lib/libhiredis_static.a")
+
 set(NANOMSG_INCLUDE "${PROJECT_SOURCE_DIR}/deps/libnanomsg/include")
 set(NANOMSG_LIB "${PROJECT_SOURCE_DIR}/deps/libnanomsg/lib/libnanomsg.a")
+
+set(NNG_INCLUDE "${PROJECT_SOURCE_DIR}/deps/libnng/include")
+set(NNG_LIB "${PROJECT_SOURCE_DIR}/deps/libnng/lib/libnng.a")
 
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")

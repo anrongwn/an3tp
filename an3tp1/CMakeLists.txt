@@ -16,12 +16,14 @@ include_directories(${VRL_INCLUDE_DIR})
 include_directories(${TCMALLOC_INCLUDE_DIR})
 include_directories(${HIREDIS_INCLUDE})
 include_directories(${NANOMSG_INCLUDE})
+include_directories(${NNG_INCLUDE})
 include_directories(.)
 
 message("an3tp1 UV_INCLUDE_DIR = ${UV_INCLUDE_DIR}")
 message("an3tp1 CURL_INCLUDE_DIR = ${CURL_INCLUDE_DIR}")
 message("an3tp1 HIREDIS_INCLUDE = ${HIREDIS_INCLUDE}")
 message("an3tp1 NANOMSG_INCLUDE = ${NANOMSG_INCLUDE}")
+message("an3tp1 NNG_INCLUDE = ${NNG_INCLUDE}")
 
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
@@ -43,7 +45,7 @@ if (NOT WIN32)
     set_target_properties(${an3tp1_TARGET_NAME} PROPERTIES LINK_FLAGS "-Wl,-rpath,./")
 
     #target_link_libraries(an3tp1 pthread dl rt z crypto ssl vrl)
-    target_link_libraries(${an3tp1_TARGET_NAME} pthread dl rt anl nsl ${HIREDIS_LIB} ${NANOMSG_LIB} )  
+    target_link_libraries(${an3tp1_TARGET_NAME} dl rt -pthread nsl ${HIREDIS_LIB} ${NNG_LIB} )  
     
 else()
     target_link_libraries(${an3tp1_TARGET_NAME} ${UV_LIB} ${CURL_LIB} ${VRL_LIB})
