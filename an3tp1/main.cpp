@@ -144,6 +144,12 @@ int main(int argc, char *argv[]) {
 
     producer.stop();
     consumer.stop();
+
+    producer.wait_exit();
+    std::cout << "producer.wait_exit." << std::endl;
+    consumer.wait_exit();
+    std::cout << "consumer.wait_exit." << std::endl;
+
     return 0;
 
     auto start = std::chrono::system_clock::now();

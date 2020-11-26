@@ -27,6 +27,14 @@ int send_sock_init(int *sock);
 //接收数据的socket初始化
 int recieve_sock_init(int *sock);
 
+struct sql_context_s {
+    void *data;
+    int nn_socket;
+    sqlite3 *db_;
+    volatile int exit_;
+};
+typedef sql_context_s sql_context_t;
+
 //
 class an_data_producer {
   public:
@@ -37,9 +45,19 @@ class an_data_producer {
 
     int start(const char *dbname);
     int stop() {
-        exit_ = 1;
-        return exit_;
+        nn_term();
+
+        context_.exit_ = 1;
+        return context_.exit_;
     }
+    int wait_exit() {
+        if (tid_) {
+            pthread_join(tid_, nullptr);
+            tid_ = 0;
+        }
+        return tid_;
+    }
+
 
   private:
     static int data_query_cb(void *context, int colcount, char **colvalues, char **colnames);
@@ -47,9 +65,9 @@ class an_data_producer {
     static void *produce(void *args);
 
   private:
-    sqlite3 *db_;
+    // sqlite3 *db_;
     pthread_t tid_;
-    volatile int exit_;
+    sql_context_t context_;
 };
 
 class an_data_consumer {
@@ -61,8 +79,18 @@ class an_data_consumer {
 
     int start(const char *dbname);
     int stop() {
+        nn_term();
+        
         exit_ = 1;
         return exit_;
+    }
+
+    int wait_exit() {
+        if (tid_) {
+            pthread_join(tid_, nullptr);
+            tid_ = 0;
+        }
+        return tid_;
     }
 
   private:
