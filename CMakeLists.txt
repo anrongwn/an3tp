@@ -51,6 +51,9 @@ set(NANOMSG_LIB "${PROJECT_SOURCE_DIR}/deps/libnanomsg/lib/libnanomsg.a")
 set(NNG_INCLUDE "${PROJECT_SOURCE_DIR}/deps/libnng/include")
 set(NNG_LIB "${PROJECT_SOURCE_DIR}/deps/libnng/lib/libnng.a")
 
+set(CJsonObject_INCLUDE "${PROJECT_SOURCE_DIR}/deps/CJsonObject")
+set(SQLITE3_INCLUDE "${PROJECT_SOURCE_DIR}/deps/sqlite3.33")
+
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 	set(TCMALLOC_LIB "${PROJECT_SOURCE_DIR}/deps/libtcmalloc/lib/libtcmalloc.a")
@@ -76,6 +79,8 @@ message("HIREDIS_INCLUDE = ${HIREDIS_INCLUDE}")
 message("HIREDIS_LIB = ${HIREDIS_LIB}")
 message("NANOMSG_INCLUDE = ${NANOMSG_INCLUDE}")
 message("NANOMSG_LIB = ${NANOMSG_LIB}")
+message("CJsonObject_INCLUDE = ${CJsonObject_INCLUDE}")
+message("SQLITE3_INCLUDE = ${SQLITE3_INCLUDE}")
 
 
 if(NOT WIN32)

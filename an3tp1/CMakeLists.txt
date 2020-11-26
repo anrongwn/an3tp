@@ -17,6 +17,10 @@ include_directories(${TCMALLOC_INCLUDE_DIR})
 include_directories(${HIREDIS_INCLUDE})
 include_directories(${NANOMSG_INCLUDE})
 include_directories(${NNG_INCLUDE})
+
+include_directories(${CJsonObject_INCLUDE})
+include_directories(${SQLITE3_INCLUDE})
+
 include_directories(.)
 
 message("an3tp1 UV_INCLUDE_DIR = ${UV_INCLUDE_DIR}")
@@ -29,6 +33,8 @@ message("an3tp1 NNG_INCLUDE = ${NNG_INCLUDE}")
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 set(CMAKE_SKIP_BUILD_RPATH true)
 aux_source_directory(. SRCS_DIR)
+aux_source_directory(../deps/CJsonObject SRCS_DIR)
+aux_source_directory(../deps/sqlite3.33 SRCS_DIR)
 
 #link_libraries(${UV_LIB} ${CURL_LIB})
 #link_libraries(${TCMALLOC_LIB})

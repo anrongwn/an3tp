@@ -1,0 +1,12 @@
+.git/
+.settings/
+*.o
+*.so
+.cproject
+.project
+*.swp
+*.exe
+*.txt
+*.log
+*.json
+CJsonObjectTest
