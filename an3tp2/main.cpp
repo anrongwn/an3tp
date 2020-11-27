@@ -26,9 +26,10 @@
 #include <time.h>
 
 //#include "hiredis.h"
-#include "nng/nng.h"
 #include <pthread.h>
 #include <unistd.h>
+
+#include "an_nng.h"
 
 /*
 typedef struct vrl_s {
@@ -45,7 +46,7 @@ typedef struct test_s {
 	int id;
 } test_t;
 
-std::atomic_bool g_exit_flag(false);
+volatile std::atomic_bool g_exit_flag(false);
 
 static void signal_handler(int signum) {
 	std::cout << "recv " << signum << " signal" << std::endl;
@@ -127,14 +128,21 @@ int main(int argc, char *argv[]) {
 	int interval = 40;
 #endif
 
-	nng_fini();
+	if ((argc > 1) && (strcmp(CLIENT, argv[1]) == 0))
+		return (client(argv[2]));
 
-	while (!g_exit_flag) {
+	if ((argc > 1) && (strcmp(SERVER, argv[1]) == 0))
+		return (server(argv[2]));
+
+	fprintf(stderr, "Usage: reqrep %s|%s <URL> ...\n", CLIENT, SERVER);
+
+	/*while (!g_exit_flag) {
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(10));
-	}
+	}*/
 	std::cout << "stop." << std::endl;
 
+	nng_fini();
 	return 0;
 
 	/*
