@@ -34,15 +34,9 @@ struct get_data_cmd{
     	gettimeofday(&tv, nullptr);
 		struct tm * time_ptr = localtime(&tv.tv_sec);
 
-		std::string echo = fmt::format("{}-{}-{} {}:{}:{}.{}", time_ptr->tm_year + 1900,
-            time_ptr->tm_mon + 1,
-            time_ptr->tm_mday,
-            time_ptr->tm_hour,
-            time_ptr->tm_min,
-            time_ptr->tm_sec,
-			tv.tv_usec);
-
-
+		std::string echo = fmt::format("{:04d}-{:02d}-{:02d} {:02d}:{:02d}:{:02d}.{:06d}", time_ptr->tm_year + 1900,
+									   time_ptr->tm_mon + 1, time_ptr->tm_mday, time_ptr->tm_hour, time_ptr->tm_min,
+									   time_ptr->tm_sec, tv.tv_usec);
 
 		return echo;
 		
@@ -154,8 +148,6 @@ int client(const char *url, const char * name) {
 		fatal("nng_dial", rv);
 	}
 
-	
-	
 	while (!g_exit_flag) {
 		neb::CJsonObject rpc_cmd;
 		rpc_cmd.Add("jsonrpc", "2.0");
@@ -183,7 +175,8 @@ int client(const char *url, const char * name) {
 		}
 
 		g_console->info("{} CLIENT RECEIVED DATE: {}", name, std::string(buf, sz));
-		
+		nng_free(buf, sz);
+
 		/*
 		if (sz == sizeof(uint64_t)) {
 			uint64_t now;
@@ -198,7 +191,7 @@ int client(const char *url, const char * name) {
 		nng_msleep(10);
 	}
 	// This assumes that buf is ASCIIZ (zero terminated).
-	nng_free(buf, sz);
+	// nng_free(buf, sz);
 	nng_close(sock);
 	return (0);
 }
