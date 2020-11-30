@@ -54,6 +54,7 @@
         "regex": "cpp",
         "typeindex": "cpp",
         "valarray": "cpp",
-        "random": "cpp"
+        "random": "cpp",
+        "iomanip": "cpp"
     }
 }

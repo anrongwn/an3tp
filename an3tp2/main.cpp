@@ -29,6 +29,7 @@
 #include <pthread.h>
 #include <unistd.h>
 
+#include "an_fmtput.h"
 #include "an_nng.h"
 
 /*
@@ -55,6 +56,8 @@ static void signal_handler(int signum) {
 		g_exit_flag.store(true);
 		// vrl_stop_notify(vrl, 1);
 		// vrl_stop_event_loop(vrl, 0);
+
+		nng_closeall();
 		break;
 	case SIGPIPE:
 		// g_exit_flag.store(true);
@@ -97,8 +100,11 @@ static void thread_cb(int mode, const char *url, const char *params) {
 
 // main
 int main(int argc, char *argv[]) {
+	g_console->set_pattern("[%^%l%$] %v");
+
 #ifdef DEBUG
-	std::cout << "an3tp2 debug mode." << std::endl;
+	// std::cout << "an3tp2 debug mode." << std::endl;
+	g_console->info("an3tp2 debug mode.");
 #endif
 	auto start = std::chrono::system_clock::now();
 	signal(SIGINT, signal_handler);
@@ -128,13 +134,17 @@ int main(int argc, char *argv[]) {
 	int interval = 40;
 #endif
 
-	if ((argc > 1) && (strcmp(CLIENT, argv[1]) == 0))
-		return (client(argv[2]));
+	if ((argc >= 4) && (strcmp(CLIENT, argv[1]) == 0)) {
 
-	if ((argc > 1) && (strcmp(SERVER, argv[1]) == 0))
-		return (server(argv[2]));
+		return (client(argv[2], argv[3]));
+	}
 
-	fprintf(stderr, "Usage: reqrep %s|%s <URL> ...\n", CLIENT, SERVER);
+	if ((argc >= 4) && (strcmp(SERVER, argv[1]) == 0)){
+		
+		return (server(argv[2], argv[3]));
+	}
+	
+	fprintf(stderr, "Usage: reqrep %s|%s <URL> %s...\n", CLIENT, SERVER, "name");
 
 	/*while (!g_exit_flag) {
 

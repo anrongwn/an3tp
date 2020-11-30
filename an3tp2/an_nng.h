@@ -38,10 +38,10 @@ extern "C" {
 		(((uint64_t)((uint8_t)(ptr)[6])) << 8) + (((uint64_t)(uint8_t)(ptr)[7]))
 
 // server handle
-int server(const char *url);
+int server(const char *url, const char *name);
 
 // client handle
-int client(const char *url);
+int client(const char *url, const char *name);
 
 #ifdef __cplusplus
 }
